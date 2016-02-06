@@ -1,2 +1,2 @@
-# Lasercutter_Reloaded_Firmware
-Lasercutter software
+# Lasercutter Reloaded Firmware
+Will be pushed soon
