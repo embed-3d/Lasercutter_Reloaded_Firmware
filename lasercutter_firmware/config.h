@@ -5,7 +5,8 @@
 // 1 - pwm controlled laser
 #define LASER_PWM 1
 
-
+#define steps_per_mm_X 74.44
+#define steps_per_mm_Y 74.51
 
 
 

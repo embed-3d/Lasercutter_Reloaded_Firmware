@@ -1,7 +1,6 @@
 
 
-extern int x_neu;
-extern int y_neu;
+
 extern int x_aktu;
 extern int y_aktu;
 

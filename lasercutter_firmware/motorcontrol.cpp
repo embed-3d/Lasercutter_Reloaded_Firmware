@@ -10,44 +10,19 @@
 
 #include "motorcontrol.h"
 #include "Lasercutter_main.h"
+#include "config.h"
 
 #include <math.h>
 #include "AFMotor.h"
 
-AF_Stepper motor1(48, 2); //Y-Achse
-AF_Stepper motor2(48, 1); //X-Achse 
+AF_Stepper motor1(48, 2); //Y-Axis
+AF_Stepper motor2(48, 1); //X-Axis
 
 double lastx_g;
 double lasty_g;
 
 
-void line(int x0, int y0, int x1, int y1, int velo)
-{
-  int dx =  abs(x1-x0), sx = x0<x1 ? 1 : -1;  // 1 Forward -1 Backward
-  int dy = -abs(y1-y0), sy = y0<y1 ? 1 : -1;  //
-  int err = dx+dy, e2; /* error value e_xy */
 
- 
-  for(;;){  /* loop */
- 
-    
-    if (x0==x1 && y0==y1) break;
-    e2 = 2*err;
-    if (e2 > dy) { 
-      err += dy; x0 += sx; 
-      if (sx == 1) motor1.onestep(FORWARD, MICROSTEP);//INTERLEAVE); 
-      else motor1.onestep(BACKWARD, MICROSTEP);//INTERLEAVE); 
-  
-     } 
-    
-    if (e2 < dx) {
-       err += dx; y0 += sy; 
-       if (sy == 1) motor2.onestep(FORWARD, MICROSTEP);//INTERLEAVE); 
-       else motor2.onestep(BACKWARD, MICROSTEP);//INTERLEAVE); 
-       } 
-    delay (velo);
-  }
-}
 
 // This method assumes the limits have already been checked.
 // This method assumes the start and end radius match (both points are same distance from center)
@@ -63,7 +38,7 @@ void line(int x0, int y0, int x1, int y1, int velo)
 void arc(double posx, double posy, double posi,double posj,double x1,double y1, bool dir,int velo)
 {
     double cx,cy;
-    // berechne mittlepunkt
+    // calculate center point
     cx = posx + posi;
     cy = posy + posj;
 
@@ -118,8 +93,6 @@ void arc(double posx, double posy, double posi,double posj,double x1,double y1, 
         nx = cx + cos(angle3) * radius ;
         ny = cy + sin(angle3) * radius;
         // make a line to that intermediate position
-        //Serial.println(nx,DEC) ;
-        //Serial.println(ny,DEC) ;   
         Line(nx, ny , velo);    
      
       }
@@ -176,12 +149,7 @@ delay (velo);
             y_aktu = y1;
        
 
-    }
-
-    //x_aktu = x1;
-    //y_aktu = y1;
-
-    
+    }  
 
 
 }
@@ -201,7 +169,7 @@ void MoveArc(double xin, double yin, double cx, double cy, bool dir ,int velo)
   lasty_g = yin;
 }
 
-//neue methode
+
 void MoveTo(double gxin, double gyin, int velo)
 {
 Line(gxin, gyin, velo);
@@ -210,13 +178,7 @@ lasty_g = gyin;
 }
 
 
-void moveTo(int x1, int y1, int velo)
-{
-  line (x_aktu, y_aktu, x1, y1, velo);
-  x_aktu=x1;
-  y_aktu=y1;
 
-}
 
 void turnmotorsoff()
 {

@@ -12,17 +12,15 @@
 #include "hardware.h"
 #include "motorcontrol.h"
 #include <math.h>
-int x_neu, y_neu, x_aktu, y_aktu;
+int  x_aktu, y_aktu;
 
 
-//int LASER = 10;//14; // A0 //2;
 float vspeed = 0;
 int cutspeed = 10;//10;
 int pwmspeed = 255;
 
 #define COMMAND_SIZE 128
-// 0= eigneer code; 1 = orginal
-//#define OwnCode
+
 
 char aWord[COMMAND_SIZE];
 String command;
@@ -34,9 +32,9 @@ long no_data = 0;
 float x,y,i,j;
 char c;
 long code;
-char buf[10]; // Buffer für Umwandlung String to Float
+char buf[10]; // Buffer for converting string to float
 
-bool laserpwm =false;
+
 
 
 
@@ -55,12 +53,12 @@ void main_lasercutter()
 
 
    if (Serial.available() > 0) {
-    // nächstes Zeichen
+    // next char
     //====================
     c = Serial.read();
     no_data = 0;
 
-    // newline ist Befehlsende
+    // newline is end of command
     //==========================
     if (c != '\n') {
       aWord[serial_count] = c;
@@ -77,7 +75,7 @@ void main_lasercutter()
 
     part=0;
     last_space= 0;
-   //Serial.print("alles da");
+   
     for (int i=0; i < serial_count; i++)
     {
       if (command.charAt(i) == ' ') {
@@ -92,8 +90,7 @@ void main_lasercutter()
      part++;
 
      String part0buff = command_part[0];
-    //char part0buff[command_part[0].length()];
-    //part0buff[0] = command_part[0];
+
      int cnt = 0;
      bool b = false;
 
@@ -102,20 +99,19 @@ void main_lasercutter()
         if ((part0buff[i] && part0buff[i] >= 65) || (122 >= part0buff[i] && part0buff[i] >= 79))
         {
           cnt++;
-          //Serial.print(cnt,DEC);
+         
         }
         if(cnt == 2 && b == false)
           {
-            //Serial.print("double");
+            
             command_part[1] = command_part[0].substring(i,command_part[0].length());
             command_part[0] = command_part[0].substring(0,i);
             b = true;
-            //Serial.print(command_part[0] );
-            //Serial.print(command_part[1] );
+
           }
      }
 
-    //Serial.print("ende");
+
 
 
     for (int i=0; i < part; i++){
@@ -125,7 +121,7 @@ void main_lasercutter()
       if ((command_part[0] == "G01") || (command_part[0] == "g01") || (command_part[0] == "G1")) {
         extract_parameter();
         MoveTo(x, y,cutspeed);
-        //moveTo(x_neu, y_neu,cutspeed);
+
         Serial.println("OK");
        }
 
@@ -133,8 +129,7 @@ void main_lasercutter()
         extract_parameter();
 
         MoveArc(x, y, i, j, false, cutspeed);
-        //MoveTo(x, y,cutspeed);
-        //moveTo(x_neu, y_neu,cutspeed);
+
         Serial.println("OK");
        }
 
@@ -142,27 +137,25 @@ void main_lasercutter()
         extract_parameter();
         MoveArc(x, y, i, j, true, cutspeed);
 
-        //MoveTo(x, y,cutspeed);
-        //moveTo(x_neu, y_neu,cutspeed);
         Serial.println("OK");
        }
 
      if ((command_part[0] == "G21") || (command_part[0] == "g21")) {
 
-        //Nix tun
+        //Do nothing
         Serial.println("OK");
        }
 
      if ((command_part[0] == "G90") || (command_part[0] == "g90")) {
 
-        //Nix tun
+        //Do nothing
         Serial.println("OK");
        }
 
      if ((command_part[0] == "G0") || (command_part[0] == "g0")) {
         extract_parameter();
         MoveTo(x, y,5);
-        //moveTo(x_neu, y_neu,5);
+
         Serial.println("OK");
        }
 
@@ -183,8 +176,8 @@ void main_lasercutter()
        }
 
      if ((command_part[0] == "M05") || (command_part[0] == "M5") || (command_part[0] == "m5") || (command_part[0] == "m05")) {
-        //Laser aus
-        //laserpwm = false;
+        //Laser off
+
         laser_off();
         Serial.println("OK");
        }
@@ -192,8 +185,8 @@ void main_lasercutter()
 
 
      if ((command_part[0] == "M02") || (command_part[0] == "M2")) {
-        //Laser aus
-        //laserpwm = false;
+        //Laser off
+
         laser_off();
         Serial.println("OK");
        }
@@ -205,7 +198,7 @@ void main_lasercutter()
     }
 
 
-    //#endif
+  
 }
 
 
@@ -236,10 +229,7 @@ void extract_parameter()
         command_part[1].toCharArray(buf,command_part[1].length()+1);
 
         x = atof (buf);
-        /*
-        x = x *10;
-        x_neu = int (x);
-        */
+
       }
       if (command_part[2].startsWith("Y")) {
         command_part[2] = command_part[2].substring(1, command_part[2].length()+1);
@@ -247,10 +237,7 @@ void extract_parameter()
         y= atof (buf);
 
 
-       /*
-        y = y *10;
 
-        y_neu = int (y);*/
 
       }
 
@@ -284,7 +271,7 @@ void extract_parameter()
 
         pwmspeed = atof (buf);
         pwmspeed = int (pwmspeed);
-        //Serial.println(pwmspeed);
+
 
 
       }
